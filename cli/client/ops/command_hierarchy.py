@@ -27,11 +27,10 @@ class CommandHierarchy(object):
         for _, module_name, _ in walk_packages(package.__path__, f'{package.__name__}.'):
             module = import_module(module_name)
     
-    def query(self, class_path):
-        levels = class_path.split('.')
-        current_level = self.tree
+    def query(self, command_chain):
+        current_level = self.tree['CommandBase']
 
-        for level in levels:
+        for level in command_chain:
             if level in current_level:
                 current_level = current_level[level]
                 continue
