@@ -15,11 +15,10 @@ class CommandHierarchy(object):
         if parent_tree is None:
             parent_tree = self.tree
         
-        class_name = current_class.__name__
-        parent_tree[class_name] = {}
+        parent_tree[current_class] = {}
 
         for subclass in current_class.__subclasses__():
-            self.build_tree(subclass, parent_tree[class_name])
+            self.build_tree(subclass, parent_tree[current_class])
     
     def import_classes(self):
         package = import_module(self.package_name)
@@ -28,13 +27,13 @@ class CommandHierarchy(object):
             module = import_module(module_name)
     
     def query(self, command_chain):
-        current_level = self.tree['CommandBase']
+        current_level = self.tree[self.base_class]
 
         for level in command_chain:
             if level in current_level:
-                current_level = current_level[level]
-                continue
+               current_level = current_level[level]
+               continue
 
-            return None
+            return f'Unrecognised command. Available commands: {current_level.keys()}'
         
         return [key for key in current_level.keys()]
